@@ -1,0 +1,50 @@
+;(function($, window, document, undefined) {
+	
+	$.fn.parallax = function( options ) {
+
+		// basic settings
+		var settings = $.extend({
+				friction: 0.1
+			}, options);
+
+		
+		// save jquery version of window 
+		var $win = $(window);
+
+
+		// return object for chaining-tatum
+		return this.each( function() {
+			
+			// element, which backround want to scroll 
+			var element = $(this),
+				startingPosition = { // find first 
+					left: element.css('backgroundPosition').split(' ')[0],
+					top: parseInt(element.css('backgroundPosition').split(' ')[1], 10) 
+				};
+
+			// start changing of background
+			render( element, startingPosition );
+
+		});
+
+
+		// vykona posuvanie
+		function render(element, startingPosition) {
+			// on each scroll of window call the function, that calcuate new background position of page
+			$win.on('scroll', function() {
+				
+				var	bgTop = element.offset().top, // catch position, how many pixels from top
+					winTop = $win.scrollTop(); // catch how many scrolled from top
+
+				// calcuate new Y pozition of background
+				var newBgTop = Math.floor( (bgTop + startingPosition.top - winTop) * settings.friction );
+
+				// set new position of element 
+				element.css({ backgroundPosition: startingPosition.left + ' ' + newBgTop + 'px' });	
+
+			});
+		}
+
+	}
+
+})(jQuery, window, document);
